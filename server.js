@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const {PORT, DATABASE_URL} = require('./config');
 
+const usersRoutes = require('./routes/users-routes');
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -14,6 +16,9 @@ app.use(cors());
 app.use(helmet());
 
 app.use(express.json({extended: false}));
+
+//Users route
+app.use('/api/users',usersRoutes);
 
 let server;
 
@@ -25,7 +30,7 @@ function runServer() {
             }
             
             server = app.listen(PORT, () => {
-                console.log(`Your server is listening on port ${PORT}`);
+                console.log(`The server is listening on port ${PORT}`);
                 resolve();
             })
             .on('error', err => {

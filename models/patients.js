@@ -5,11 +5,15 @@ const mongoose = require('mongoose');
 const PatientSchema = mongoose.Schema({
     firstName: {
         type: String,
-        required: String,
+        required: true,
+    },
+    middlename: {
+        type: String,
+        required: false
     },
     lastName: {
         type: String,
-        required: String,
+        required: true,
     },
     // address: {
     //     number: {

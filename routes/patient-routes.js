@@ -8,5 +8,11 @@ router.get('/:pid', patientControllers.getPatientById);
 
 router.get('/users/:uid', patientControllers.getPatientByUserId);
 
+router.post('/', patientControllers.addNewPatient);
+
+router.patch('/:pid', patientControllers.editPatient);
+
+router.delete('/:pid', patientControllers.deletePatient);
+
 module.exports = router;
 

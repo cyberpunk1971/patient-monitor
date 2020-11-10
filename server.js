@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const {PORT, DATABASE_URL} = require('./config');
 
+const HttpError = require('./models/http-error');
+
 const medicationsRoutes = require('./routes/medications-routes');
 const patientsRoutes = require('./routes/patient-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -29,6 +31,12 @@ app.use('/api/patients', patientsRoutes);
 
 //Medication route
 app.use('/api/medications', medicationsRoutes);
+
+//Error handling for unsupported routes
+app.use((req, res, next) => {
+    const error = new HttpError('Unsupported route.', 404);
+    throw error;
+});
 
 app.use((error, req, res, next) => {
     if (res.headerSent) {

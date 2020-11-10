@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+
+//TODO add requirements and remaining keys to model
 const PatientSchema = mongoose.Schema({
     firstName: {
         type: String,
@@ -9,27 +11,27 @@ const PatientSchema = mongoose.Schema({
         type: String,
         required: String,
     },
-    address: {
-        number: {
-            number: String
-        },
-        street: {
-            type: String,
+    // address: {
+    //     number: {
+    //         number: String
+    //     },
+    //     street: {
+    //         type: String,
             
-        },
-        city: {
-            type: String,
-        },
-        unit: {
-            type: String,
-        },
-        state: {
-            type: String,
-        },
-        zip: {
-            type: Number
-        }
-    }
+    //     },
+    //     city: {
+    //         type: String,
+    //     },
+    //     unit: {
+    //         type: String,
+    //     },
+    //     state: {
+    //         type: String,
+    //     },
+    //     zip: {
+    //         type: Number
+    //     }
+    // }
 });
 
 const Patient = mongoose.model('Patient', PatientSchema);

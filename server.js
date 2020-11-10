@@ -7,7 +7,10 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const {PORT, DATABASE_URL} = require('./config');
 
+const medicationsRoutes = require('./routes/medications-routes');
+const patientsRoutes = require('./routes/patient-routes');
 const usersRoutes = require('./routes/users-routes');
+
 
 const app = express();
 
@@ -17,8 +20,25 @@ app.use(helmet());
 
 app.use(express.json({extended: false}));
 
+
 //Users route
-app.use('/api/users',usersRoutes);
+app.use('/api/users', usersRoutes);
+
+//Patient route
+app.use('/api/patients', patientsRoutes);
+
+//Medication route
+app.use('/api/medications', medicationsRoutes);
+
+app.use((error, req, res, next) => {
+    if (res.headerSent) {
+        return next(error);
+    }
+    res.status(error.code || 500);
+    res.json({
+        message: error.message || 'An unknown error occurred.'
+    });
+});
 
 let server;
 

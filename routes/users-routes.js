@@ -9,11 +9,11 @@ const DUMMY_USERS = [
         email: 'newUser@email.com',
         password: 'hashedPassword'
     }
-
 ]
 
 router.get('/:uid', (req, res, next) => {
     const userId = req.params.uid;
+
     const user = DUMMY_USERS.find(u => {
         return u.id === userId;
     });

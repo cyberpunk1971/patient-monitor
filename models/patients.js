@@ -15,6 +15,11 @@ const PatientSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    medications: [
+        {type: mongoose.Schema.Types.ObjectId,
+         ref: 'Medications'
+        }
+    ]
     // address: {
     //     number: {
     //         number: String

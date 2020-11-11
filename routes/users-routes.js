@@ -1,25 +1,25 @@
 const express = require('express');
+const { check } = require('express-validator');
+
+const usersControllers = require('../controllers/users-controllers');
 
 const router = express.Router();
 
-const DUMMY_USERS = [
-    {
-        id: 'u1',
-        username: 'newUser',
-        email: 'newUser@email.com',
-        password: 'hashedPassword'
-    }
-]
+//router.get('/', usersControllers.getUsers);
 
-router.get('/:uid', (req, res, next) => {
-    const userId = req.params.uid;
+//router.get('/users/:uid', patientControllers.getPatientsByUserId);
 
-    const user = DUMMY_USERS.find(u => {
-        return u.id === userId;
-    });
-    res.json({
-        user
-    });
-});
+router.post('/register', 
+check('username').not().isEmpty(),
+check('email').not().isEmpty().normalizeEmail().isEmail(),
+check('password').not().isEmpty().isLength({ min: 8, max: 72}),
+usersControllers.registerUser);
+
+router.post('/login', 
+check('email').not().isEmpty(),
+check('password').not().isEmpty(),
+usersControllers.loginUser);
+
 
 module.exports = router;
+

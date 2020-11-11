@@ -1,9 +1,12 @@
 const {v4 : uuidv4} = require('uuid');
 const HttpError = require('../models/http-error');
+const { validationResult } = require('express-validator');
+const {Patient} = require('../models/patients');
 
-const DUMMY_PATIENTS = [
+
+let DUMMY_PATIENTS = [
     {
-        id: 'p1',
+        id: uuidv4(),
         firstname: 'John',
         middlename: "J",
         lastname: 'Doe',
@@ -27,35 +30,49 @@ const getPatientById = (req, res, next) => {
     res.json({ patient });
 };
 
-const getPatientByUserId = (req, res, next) => {
+const getPatientsByUserId = (req, res, next) => {
     const userId = req.params.uid;
 
-    const patient = DUMMY_PATIENTS.find(p => {
+    const patients = DUMMY_PATIENTS.filter(p => {
         return p.user === userId;
     });
 
-    if (!patient) {
+    if (!patients || patients.length === 0) {
         return next(
-            new HttpError("Patient not found for current user.", 404));
+            new HttpError("Patients not found for current user.", 404));
     }
-    res.json({ patient });
+    res.json({ patients });
 };
 
-const addNewPatient = (req, res, next) => {
-    const { firstname, lastname, age, user } = req.body;
-    const newPatient = {
-        id: uuidv4(),
-        firstname,
-        lastname,
-        age,
-        user
-    };
-    DUMMY_PATIENTS.push(newPatient);
+const addNewPatient = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        throw new HttpError("Please enter all fields.", 422);
+    }
 
-    res.status(201).json({patient: newPatient});
+    const { firstname, lastname, age } = req.body;
+    const newPatient = new Patient({
+        firstname,
+        lastname
+    });
+    
+    try {
+        await newPatient.save();
+    } catch (err) {
+        const error = new HttpError("Failed to create new patient.", 500);
+        return next(error);
+    }
+
+   res.status(201).json({patient: newPatient});
 };
 
 const editPatient = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log(errors);
+        throw new HttpError("Please enter all fields.", 422);
+    }
     const { firstname, lastname, age } = req.body;
     const patientId = req.params.pid;
 
@@ -72,11 +89,13 @@ const editPatient = (req, res, next) => {
 };
 
 const deletePatient = (req, res, next) => {
-
+    const patientId = req.params.pid;
+    DUMMY_PATIENTS = DUMMY_PATIENTS.filter(p => p.id !== patientId);
+    res.status(200).json({ message: "Patient deleted." });
 };
 
 exports.getPatientById = getPatientById;
-exports.getPatientByUserId = getPatientByUserId;
+exports.getPatientsByUserId = getPatientsByUserId;
 exports.addNewPatient = addNewPatient;
 exports.editPatient = editPatient;
 exports.deletePatient = deletePatient;

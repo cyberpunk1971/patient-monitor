@@ -1,96 +1,139 @@
 const {v4 : uuidv4} = require('uuid');
 const HttpError = require('../models/http-error');
 const { validationResult } = require('express-validator');
-const {Patient} = require('../models/patients');
+const { Patient } = require('../models/patients');
+const { User } = require('../models/users');
+const mongoose = require('mongoose');
 
-
-let DUMMY_PATIENTS = [
-    {
-        id: uuidv4(),
-        firstname: 'John',
-        middlename: "J",
-        lastname: 'Doe',
-        age: 42,
-        user: 'u1'
-    }
-];
-
-const getPatientById = (req, res, next) => {
+const getPatientById = async (req, res, next) => {
     const patientId = req.params.pid;
-
-    const patient = DUMMY_PATIENTS.find(p => {
-        return p.id === patientId;
-    });
+    let patient
+    try {
+        patient =  await Patient.findById(patientId);
+    } catch (err) {
+        const error = new HttpError(
+            "Could not find the patient.", 500
+        );
+        return next(error);
+    }
 
     if (!patient) {
-        return next(
-            new HttpError("Patient not found", 404));
+        const error = new HttpError(
+            "Patient not found for the ID provided.", 404
+        );
+        return next(error);
     }
-
-    res.json({ patient });
+       //convert to javascript object and remove underscore from "id"
+    res.json({ patient: patient.toObject({ getters: true }) });
 };
 
-const getPatientsByUserId = (req, res, next) => {
+const getPatientsByUserId = async (req, res, next) => {
     const userId = req.params.uid;
 
-    const patients = DUMMY_PATIENTS.filter(p => {
-        return p.user === userId;
-    });
+    let patients
+    try {
+         patients = await Patient.find({ creator: userId });
+    } catch (err) {
+        const error = new HttpError(
+            "Could not find patient by that user ID.", 500
+        );
+        return next(error);
+    }
 
     if (!patients || patients.length === 0) {
         return next(
             new HttpError("Patients not found for current user.", 404));
     }
-    res.json({ patients });
+    res.json({ patients: patients.map(patient => patient.toObject({ getters: true })) });
 };
 
 const addNewPatient = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors);
-        throw new HttpError("Please enter all fields.", 422);
+        return next (
+             new HttpError("Please enter all fields.", 422)
+        );
     }
 
-    const { firstname, lastname, age } = req.body;
+    const { firstname, lastname, age, creator } = req.body;
     const newPatient = new Patient({
         firstname,
-        lastname
+        lastname,
+        age,
+        medications: [],
+        creator
     });
-    
+
     try {
         await newPatient.save();
     } catch (err) {
-        const error = new HttpError("Failed to create new patient.", 500);
-        return next(error);
+        const error = new HttpError(
+            "Failed to add patient",
+            500
+        );
+        return next (error);
     }
 
    res.status(201).json({patient: newPatient});
 };
 
-const editPatient = (req, res, next) => {
+const editPatient = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors);
         throw new HttpError("Please enter all fields.", 422);
     }
     const { firstname, lastname, age } = req.body;
     const patientId = req.params.pid;
 
-    const updatePatient = { ...DUMMY_PATIENTS.find(p => p.id === patientId)};
-    const patientIndex = DUMMY_PATIENTS.findIndex(p => p.id === patientId);
-    updatePatient.firstname = firstname;
-    updatePatient.lastname = lastname;
-    updatePatient.age = age;
+    let patients;
+    try {
+        patients = await Patient.findById(patientId);
+    } catch (err) {
+        const error = new HttpError(
+            "Could not edit patient.", 500
+        );
+        return next(error);
+    }
 
-    DUMMY_PATIENTS[patientIndex] = updatePatient;
+    patients.firstname = firstname;
+    patients.lastname = lastname;
+    patients.age = age;
 
-    res.status(200).json({patient: updatePatient});
+   try {
+       await patients.save();
+   } catch (err) {
+       const error = new HttpError(
+           "Could not save edit.", 500
+       );
+       return next(error);
+   }
+
+    res.status(200).json({patient: patients.toObject({ getters: true })});
     
 };
 
-const deletePatient = (req, res, next) => {
+const deletePatient = async (req, res, next) => {
     const patientId = req.params.pid;
-    DUMMY_PATIENTS = DUMMY_PATIENTS.filter(p => p.id !== patientId);
+    
+    let patient;
+    try {
+        patient = await Patient.findById(patientId);
+    } catch (err) {
+        const error = new HttpError(
+            "Could not delete patient.", 500
+        );
+        return next(error);
+    }
+
+    try {
+        await patient.remove();
+    } catch (err) {
+        const error = new HttpError(
+            "Could not find patient to delete.", 500
+        );
+        return next(error);
+    }
+
     res.status(200).json({ message: "Patient deleted." });
 };
 

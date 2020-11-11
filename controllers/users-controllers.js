@@ -6,17 +6,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const HttpError = require('../models/http-error');
 
-
-
-// const DUMMY_USERS = [
-//     {
-//         id: 'u1',
-//         username: 'newUser',
-//         email: 'newUser@email.com',
-//         password: 'hashedPassword'
-//     }
-// ]
-
 const { User } = require('../models/users');
 
 // const getUsers = (req, res, next) => {
@@ -68,7 +57,8 @@ const registerUser = async (req, res, next) => {
         //id: uuidv4(),
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        patients: []
     });
 
     try {

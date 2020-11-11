@@ -27,3 +27,6 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 module.exports = { User };
+
+//Adding the "patients" as an array, to the UserSchema, allows each
+//user to have multiple patients

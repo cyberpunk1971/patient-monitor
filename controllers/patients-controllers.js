@@ -55,17 +55,42 @@ const addNewPatient = async (req, res, next) => {
         );
     }
 
-    const { firstname, lastname, age, creator } = req.body;
+    const { firstname, lastname, age } = req.body;
     const newPatient = new Patient({
         firstname,
         lastname,
         age,
         medications: [],
-        creator
+        creator: []
     });
 
+    let user;
+
     try {
-        await newPatient.save();
+        user = await User.findById(creator);
+
+    } catch (err) {
+        const error = new HttpError(
+            "Unable to save patient", 500
+        )
+        return next(error);
+    }
+
+    if (!user) {
+        const error = new HttpError("Could not find user with ID provided", 404);
+        return next(error);
+    }
+
+    console.log(user);
+
+    try {
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await newPatient.save({ session: sess });
+        user.patients.push(newPatient);
+        await user.save({ session: sess });
+        await sess.commitTransaction();
+
     } catch (err) {
         const error = new HttpError(
             "Failed to add patient",

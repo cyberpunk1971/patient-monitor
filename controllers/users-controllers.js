@@ -8,10 +8,6 @@ const HttpError = require('../models/http-error');
 
 const { User } = require('../models/users');
 
-// const getUsers = (req, res, next) => {
-//     res.json({users: DUMMY_USERS});
-// }
-
 const registerUser = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -20,7 +16,6 @@ const registerUser = async (req, res, next) => {
             new HttpError("Please enter all fields.", 422)
         );
     }
-
     const { username, email, password } = req.body;
 
     let userExists;
@@ -87,6 +82,7 @@ const registerUser = async (req, res, next) => {
             user: newUser.id, email: newUser.email, token: token
         });
 };
+
 
 const loginUser = async (req, res, next) => {
     const { email, password } = req.body;

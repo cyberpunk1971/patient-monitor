@@ -1,4 +1,5 @@
 const express = require('express');
+const {requireAuth} = require('../auth/auth');
 const { check } = require('express-validator');
 
 const patientControllers = require('../controllers/patients-controllers');
@@ -9,14 +10,13 @@ router.get('/:pid', patientControllers.getPatientById);
 
 router.get('/users/:uid', patientControllers.getPatientsByUserId);
 
-router.post('/',
-    check('firstname')
+router.post('/', requireAuth, 
+    check('name')
         .not()
         .isEmpty(),
-    check('lastname').not().isEmpty(),
     patientControllers.addNewPatient);
 
-router.patch('/:pid',
+router.patch('/:pid', requireAuth,
     check('firstname')
         .not()
         .isEmpty(),

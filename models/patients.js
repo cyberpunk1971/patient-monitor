@@ -3,29 +3,26 @@ const mongoose = require('mongoose');
 
 //TODO add requirements and remaining keys/values and models to model
 const PatientSchema = new mongoose.Schema({
-    firstname: {
-        type: String,
-        required: true,
-    },
-    middlename: {
-        type: String,
-        required: false
-    },
-    lastname: {
+    name: {
         type: String,
         required: true,
     },
     age: {
         type: Number,
-        required: true
+        //required: true
     },
-    creator: [
+    gender: {
+        type: String
+    },
+    race: {
+        type: String
+    },
+    creator: 
         {
             type: mongoose.Types.ObjectId,
-            required: true,
+            //required: true,
             ref: 'User'
-        }
-    ],
+        },
     medications: [
         {
             type: mongoose.Schema.Types.ObjectId,

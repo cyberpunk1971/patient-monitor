@@ -16,12 +16,13 @@ const usersRoutes = require('./routes/users-routes');
 
 const app = express();
 
-app.use(bodyParser.json());
+
 app.use(cors());
 app.use(helmet());
 
 app.use(express.json({extended: false}));
 
+//app.use(bodyParser.json());
 
 //Users route
 app.use('/api/users', usersRoutes);
@@ -32,6 +33,8 @@ app.use('/api/patients', patientsRoutes);
 //Medication route
 app.use('/api/medications', medicationsRoutes);
 
+
+
 //Error handling for unsupported routes
 app.use((req, res, next) => {
     const error = new HttpError('Unsupported route.', 404);
@@ -39,6 +42,7 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+    console.log(error);
     if (res.headerSent) {
         return next(error);
     }

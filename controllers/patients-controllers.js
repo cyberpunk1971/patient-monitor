@@ -2,6 +2,7 @@ const {v4 : uuidv4} = require('uuid');
 const HttpError = require('../models/http-error');
 const { validationResult } = require('express-validator');
 const { Patient } = require('../models/patients');
+const requireAuth = require('../auth/auth');
 const { User } = require('../models/users');
 const mongoose = require('mongoose');
 
@@ -50,24 +51,23 @@ const getPatientsByUserId = async (req, res, next) => {
 const addNewPatient = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return next (
-             new HttpError("Please enter all fields.", 422)
-        );
+        return res.status(400).json(errors);
     }
 
-    const { firstname, lastname, age } = req.body;
+    const { name, age, gender, race } = req.body;
     const newPatient = new Patient({
-        firstname,
-        lastname,
+       name,
         age,
+        gender,
+        race,
         medications: [],
-        creator: []
+        creator: req.user.id
     });
 
     let user;
 
     try {
-        user = await User.findById(creator);
+       newPatient.save();
 
     } catch (err) {
         const error = new HttpError(
@@ -76,28 +76,7 @@ const addNewPatient = async (req, res, next) => {
         return next(error);
     }
 
-    if (!user) {
-        const error = new HttpError("Could not find user with ID provided", 404);
-        return next(error);
-    }
-
     console.log(user);
-
-    try {
-        const sess = await mongoose.startSession();
-        sess.startTransaction();
-        await newPatient.save({ session: sess });
-        user.patients.push(newPatient);
-        await user.save({ session: sess });
-        await sess.commitTransaction();
-
-    } catch (err) {
-        const error = new HttpError(
-            "Failed to add patient",
-            500
-        );
-        return next (error);
-    }
 
    res.status(201).json({patient: newPatient});
 };

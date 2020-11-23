@@ -58,11 +58,9 @@ const registerUser = async (req, res, next) => {
 
     try {
         await newUser.save();
+        console.log("Hello");
     } catch (err) {
-        const error = new HttpError(
-            "Could not register new user", 500
-        );
-        return next(error);
+        return next(makeError(err, "Could not register new user"));
     }
 
     let token;
@@ -150,7 +148,13 @@ const loginUser = async (req, res, next) => {
     });
 };
 
-
+const makeError = (err, msg) => {
+    const error = new HttpError(
+        msg, 500
+    );
+    console.log(err);
+    return error;
+}
 //exports.getUsers = getUsers;
 exports.registerUser = registerUser;
 exports.loginUser = loginUser;

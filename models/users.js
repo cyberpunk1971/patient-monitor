@@ -19,6 +19,11 @@ const UserSchema = new mongoose.Schema({
         minLength: 8,
         maxLength: 72
     },
+    role: {
+        default: 'admin',
+        type: String,
+        required: true
+    },
     patients: [
         {type: mongoose.Schema.Types.ObjectId,
          ref: 'Patient'

@@ -29,7 +29,8 @@ const getPatientById = async (req, res, next) => {
 };
 
 const getPatientsByUserId = async (req, res, next) => {
-    const userId = req.params.uid;
+    //will get user ID from token that is generated on login, which is saved to local storage on front end
+    const userId = req.user.id;
 
     let patients
     try {
@@ -45,7 +46,8 @@ const getPatientsByUserId = async (req, res, next) => {
         return next(
             new HttpError("Patients not found for current user.", 404));
     }
-    res.json({ patients: patients.map(patient => patient.toObject({ getters: true })) });
+    //return the array of patients
+    res.json(patients.map(patient => patient.toObject({ getters: true })) );
 };
 
 const addNewPatient = async (req, res, next) => {

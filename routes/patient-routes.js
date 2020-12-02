@@ -6,9 +6,9 @@ const patientControllers = require('../controllers/patients-controllers');
 
 const router = express.Router();
 
-router.get('/:pid', patientControllers.getPatientById);
+router.get('/:pid', requireAuth, patientControllers.getPatientById);
 
-router.get('/users/:uid', patientControllers.getPatientsByUserId);
+router.get('/', requireAuth, patientControllers.getPatientsByUserId);
 
 router.post('/', requireAuth, 
     check('name')

@@ -58,7 +58,6 @@ const registerUser = async (req, res, next) => {
 
     try {
         await newUser.save();
-        console.log("Hello");
     } catch (err) {
         return next(makeError(err, "Could not register new user"));
     }

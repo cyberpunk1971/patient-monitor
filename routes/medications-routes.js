@@ -6,11 +6,13 @@ const router = express.Router();
 
 const medicationsControllers = require('../controllers/medications-controllers');
 
+//  router.get('/:pid', requireAuth, medicationsControllers.getMedicationsById);
+
 router.post('/', requireAuth, 
 check('name').not().isEmpty(),
 medicationsControllers.addNewMedication);
 
-router.get('/:pid', requireAuth, medicationsControllers.getMedicationsById);
+
 
 // router.get('/patients/:mid', (req, res, next) => {
 //     const userId = req.params.uid;

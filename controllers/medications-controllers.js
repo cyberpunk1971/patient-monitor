@@ -1,7 +1,7 @@
 const {v4 : uuidv4} = require('uuid');
 const HttpError = require('../models/http-error');
 const { validationResult } = require('express-validator');
-const { Medications } = require('../models/medications');
+const { Medication } = require('../models/medications');
 const requireAuth = require('../auth/auth');
 const { User } = require('../models/users');
 const mongoose = require('mongoose');
@@ -28,7 +28,7 @@ const getMedicationById = async (req, res, next) => {
     res.json({ medication: medication.toObject({ getters: true }) });
 };
 
-const getMedicationsByUserId = async (req, res, next) => {
+const getMedicationsByPatientId = async (req, res, next) => {
     
     const userId = req.user.id;
 
@@ -138,7 +138,7 @@ const deleteMedication = async (req, res, next) => {
 };
 
 exports.getMedicationById = getMedicationById;
-exports.getMedicationsByUserId = getMedicationsByUserId;
+exports.getMedicationsByPatientId = getMedicationsByPatientId;
 exports.addNewMedication = addNewMedication;
 exports.editMedication = editMedication;
 exports.deleteMedication = deleteMedication;

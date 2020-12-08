@@ -26,7 +26,7 @@ const PatientSchema = new mongoose.Schema({
     medications: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Medications'
+            ref: 'Medication'
         }
     ]
     // address: {

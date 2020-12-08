@@ -9,6 +9,6 @@ const MedSchema = new mongoose.Schema({
     
 });
 
-const Medication = mongoose.model('Medications', MedSchema);
+const Medication = mongoose.model('Medication', MedSchema);
 
 module.exports = { Medication };

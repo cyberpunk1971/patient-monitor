@@ -1,4 +1,4 @@
-const {v4 : uuidv4} = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 const HttpError = require('../models/http-error');
 const { validationResult } = require('express-validator');
 const { Patient } = require('../models/patients');
@@ -10,7 +10,7 @@ const getPatientById = async (req, res, next) => {
     const patientId = req.params.pid;
     let patient
     try {
-        patient =  await Patient.findById(patientId);
+        patient = await Patient.findById(patientId);
     } catch (err) {
         const error = new HttpError(
             "Could not find the patient.", 500
@@ -24,8 +24,11 @@ const getPatientById = async (req, res, next) => {
         );
         return next(error);
     }
-       //convert to javascript object and remove underscore from "id"
-    res.json({ patient: patient.toObject({ getters: true }) });
+    //convert to javascript object and remove underscore from "id"
+    res.json(
+        patient.toObject(
+            { getters: true }
+        ));
 };
 
 const getPatientsByUserId = async (req, res, next) => {
@@ -34,7 +37,7 @@ const getPatientsByUserId = async (req, res, next) => {
 
     let patients
     try {
-         patients = await Patient.find({ creator: userId });
+        patients = await Patient.find({ creator: userId });
     } catch (err) {
         const error = new HttpError(
             "Could not find patient by that user ID.", 500
@@ -47,7 +50,7 @@ const getPatientsByUserId = async (req, res, next) => {
             new HttpError("Patients not found for current user.", 404));
     }
     //return the array of patients
-    res.json(patients.map(patient => patient.toObject({ getters: true })) );
+    res.json(patients.map(patient => patient.toObject({ getters: true })));
 };
 
 const addNewPatient = async (req, res, next) => {
@@ -58,7 +61,7 @@ const addNewPatient = async (req, res, next) => {
 
     const { name, age, gender, race } = req.body;
     const newPatient = new Patient({
-       name,
+        name,
         age,
         gender,
         race,
@@ -69,7 +72,7 @@ const addNewPatient = async (req, res, next) => {
     let user;
 
     try {
-       newPatient.save();
+        newPatient.save();
 
     } catch (err) {
         const error = new HttpError(
@@ -80,7 +83,7 @@ const addNewPatient = async (req, res, next) => {
 
     console.log(user);
 
-   res.status(201).json({patient: newPatient});
+    res.status(201).json({ patient: newPatient });
 };
 
 const editPatient = async (req, res, next) => {
@@ -105,22 +108,22 @@ const editPatient = async (req, res, next) => {
     patients.lastname = lastname;
     patients.age = age;
 
-   try {
-       await patients.save();
-   } catch (err) {
-       const error = new HttpError(
-           "Could not save edit.", 500
-       );
-       return next(error);
-   }
+    try {
+        await patients.save();
+    } catch (err) {
+        const error = new HttpError(
+            "Could not save edit.", 500
+        );
+        return next(error);
+    }
 
-    res.status(200).json({patient: patients.toObject({ getters: true })});
-    
+    res.status(200).json({ patient: patients.toObject({ getters: true }) });
+
 };
 
 const deletePatient = async (req, res, next) => {
     const patientId = req.params.pid;
-    
+
     let patient;
     try {
         patient = await Patient.findById(patientId);

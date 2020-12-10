@@ -43,7 +43,7 @@ const PatientSchema = new mongoose.Schema({
     //     unit: {
     //         type: String,
     //     },
-    //     state: {
+    //     usState: {
     //         type: String,
     //     },
     //     zip: {

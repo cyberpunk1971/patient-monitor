@@ -45,10 +45,6 @@ const getPatientsByUserId = async (req, res, next) => {
         return next(error);
     }
 
-    if (!patients || patients.length === 0) {
-        return next(
-            new HttpError("Patients not found for current user.", 404));
-    }
     //return the array of patients
     res.json(patients.map(patient => patient.toObject({ getters: true })));
 };

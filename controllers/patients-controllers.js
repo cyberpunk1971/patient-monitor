@@ -87,7 +87,7 @@ const editPatient = async (req, res, next) => {
     if (!errors.isEmpty()) {
         throw new HttpError("Please enter all fields.", 422);
     }
-    const { firstname, lastname, age } = req.body;
+    const { name, age } = req.body;
     const patientId = req.params.pid;
 
     let patients;
@@ -100,8 +100,7 @@ const editPatient = async (req, res, next) => {
         return next(error);
     }
 
-    patients.firstname = firstname;
-    patients.lastname = lastname;
+    patients.name = name;
     patients.age = age;
 
     try {

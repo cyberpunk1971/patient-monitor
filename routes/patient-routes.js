@@ -17,10 +17,10 @@ router.post('/', requireAuth,
     patientControllers.addNewPatient);
 
 router.patch('/:pid', requireAuth,
-    check('firstname')
+    check('name')
         .not()
         .isEmpty(),
-    check('lastname').not().isEmpty(),
+    
     patientControllers.editPatient);
 
 router.delete('/:pid', patientControllers.deletePatient);

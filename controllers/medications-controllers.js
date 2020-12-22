@@ -6,11 +6,11 @@ const requireAuth = require('../auth/auth');
 const { User } = require('../models/users');
 const mongoose = require('mongoose');
 
-const getMedicationById = async (req, res, next) => {
+const getMedicationsById = async (req, res, next) => {
     const medicationId = req.params.pid;
     let medication
     try {
-        medication =  await Patient.findById(medicationId);
+        medication =  await Medication.findById(medicationId);
     } catch (err) {
         const error = new HttpError(
             "Could not find the medication.", 500
@@ -34,7 +34,7 @@ const getMedicationsByPatientId = async (req, res, next) => {
 
     let medications
     try {
-         medications = await Medications.find({ creator: userId });
+         medications = await Medication.find({ creator: userId });
     } catch (err) {
         const error = new HttpError(
             "Could not find medication by that user ID.", 500
@@ -57,7 +57,7 @@ const addNewMedication = async (req, res, next) => {
     }
 
     const { name } = req.body;
-    const newMedication = new Medications({
+    const newMedication = new Medication({
        name,
         creator: req.user.id
     });
@@ -137,7 +137,7 @@ const deleteMedication = async (req, res, next) => {
     res.status(200).json({ message: "Patient deleted." });
 };
 
-exports.getMedicationById = getMedicationById;
+exports.getMedicationsById = getMedicationsById;
 exports.getMedicationsByPatientId = getMedicationsByPatientId;
 exports.addNewMedication = addNewMedication;
 exports.editMedication = editMedication;

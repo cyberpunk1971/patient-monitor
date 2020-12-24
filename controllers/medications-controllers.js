@@ -5,6 +5,7 @@ const { Medication } = require('../models/medications');
 const requireAuth = require('../auth/auth');
 const { User } = require('../models/users');
 const mongoose = require('mongoose');
+const { Patient } = require('../models/patients');
 
 const getMedicationsById = async (req, res, next) => {
     const medicationId = req.params.pid;
@@ -66,11 +67,18 @@ const addNewMedication = async (req, res, next) => {
 
     try {
        newMedication.save();
-
+       // pass in req.params.pid, pid comes from the route we set up in //medications-routes.js
+        await Patient.findByIdAndUpdate(req.params.pid, {
+            //
+            $push: {
+                medications: newMedication._id
+            }
+        });
     } catch (err) {
         const error = new HttpError(
             "Unable to save medication", 500
         )
+        console.log(err);
         return next(error);
     }
 

@@ -10,7 +10,8 @@ const getPatientById = async (req, res, next) => {
     const patientId = req.params.pid;
     let patient
     try {
-        patient = await Patient.findById(patientId);
+        patient = await Patient.findById(patientId)
+        .populate('medications');
     } catch (err) {
         const error = new HttpError(
             "Could not find the patient.", 500

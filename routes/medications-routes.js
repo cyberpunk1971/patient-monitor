@@ -8,9 +8,11 @@ const medicationsControllers = require('../controllers/medications-controllers')
 
 router.get('/:pid', requireAuth, medicationsControllers.getMedicationsById);
 
-router.post('/', requireAuth, 
+router.post('/:pid', requireAuth, 
 check('name').not().isEmpty(),
 medicationsControllers.addNewMedication);
+
+router.delete('/:pid/:medicationId', requireAuth, medicationsControllers.deleteMedication);
 
 
 

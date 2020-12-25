@@ -39,6 +39,7 @@ app.use('/api/medications', medicationsRoutes);
 app.use((req, res, next) => {
     const error = new HttpError('Unsupported route.', 404);
     throw error;
+    console.log(error);
 });
 
 app.use((error, req, res, next) => {

@@ -1,7 +1,6 @@
 require('dotenv').config();
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
-//const {v4 : uuidv4} = require('uuid');
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 const HttpError = require('../models/http-error');
@@ -76,7 +75,10 @@ const registerUser = async (req, res, next) => {
 
     res.status(201)
         .json({
-            user: newUser.id, email: newUser.email, token: token
+            user: newUser.id, 
+            email: newUser.email, 
+            token: token,
+            username: newUser.username
         });
 };
 

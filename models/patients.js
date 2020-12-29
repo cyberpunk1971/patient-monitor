@@ -7,49 +7,64 @@ const PatientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+
     age: {
         type: Number,
         //required: true
     },
+
+    dob: {
+        type: String
+    },
+
     gender: {
         type: String
     },
+
     race: {
         type: String
     },
-    creator: 
-        {
-            type: mongoose.Types.ObjectId,
-            //required: true,
-            ref: 'User'
-        },
+
+    address: {
+        type: String
+    },
+
+    street: {
+        type: String,
+    },
+
+    city: {
+        type: String,
+    },
+
+    unit: {
+        type: String,
+    },
+
+    usState: {
+        type: String,
+    },
+
+    zip: {
+        type: Number
+    },
+
+    phone: {
+        type: Number
+    },
+
+    creator: {
+        type: mongoose.Types.ObjectId,
+        //required: true,
+        ref: 'User'
+    },
+
     medications: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Medication'
         }
     ]
-    // address: {
-    //     number: {
-    //         number: String
-    //     },
-    //     street: {
-    //         type: String,
-
-    //     },
-    //     city: {
-    //         type: String,
-    //     },
-    //     unit: {
-    //         type: String,
-    //     },
-    //     usState: {
-    //         type: String,
-    //     },
-    //     zip: {
-    //         type: Number
-    //     }
-    // }
 });
 
 const Patient = mongoose.model('Patient', PatientSchema);

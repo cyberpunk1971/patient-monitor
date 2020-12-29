@@ -12,7 +12,7 @@ router.post('/:pid', requireAuth,
 check('name').not().isEmpty(),
 medicationsControllers.addNewMedication);
 
-router.delete('/:pid/:medicationId', requireAuth, medicationsControllers.deleteMedication);
+router.delete('/:pid/:mid', requireAuth, medicationsControllers.deleteMedication);
 
 
 

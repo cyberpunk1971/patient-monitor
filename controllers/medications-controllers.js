@@ -57,9 +57,13 @@ const addNewMedication = async (req, res, next) => {
         return res.status(400).json(errors);
     }
 
-    const { name } = req.body;
+    const { name, dosage, frequency, route, date } = req.body;
     const newMedication = new Medication({
         name,
+        dosage,
+        frequency,
+        route,
+        date,
         creator: req.user.id
     });
 

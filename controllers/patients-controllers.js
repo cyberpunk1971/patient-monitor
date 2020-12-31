@@ -30,6 +30,7 @@ const getPatientById = async (req, res, next) => {
         patient.toObject(
             { getters: true }
         ));
+        console.log(patient);
 };
 
 const getPatientsByUserId = async (req, res, next) => {

@@ -5,6 +5,18 @@ const mongoose = require('mongoose');
 const MedSchema = new mongoose.Schema({
     name: {
         type: String
+    },
+    dosage: {
+        type: String
+    },
+    frequency: {
+        type: String
+    },
+    route: {
+        type: String
+    },
+    date: {
+        type: String
     }
     
 });

@@ -57,12 +57,20 @@ const addNewPatient = async (req, res, next) => {
         return res.status(400).json(errors);
     }
 
-    const { name, age, gender, race } = req.body;
+    const { name, age, dob, gender, race, address, street, unit, city, usState, zip, phone } = req.body;
     const newPatient = new Patient({
         name,
         age,
+        dob,
         gender,
         race,
+        address, 
+        street,
+        unit,
+        city,
+        usState,
+        zip,
+        phone,
         medications: [],
         creator: req.user.id
     });
@@ -89,7 +97,7 @@ const editPatient = async (req, res, next) => {
     if (!errors.isEmpty()) {
         throw new HttpError("Please enter all fields.", 422);
     }
-    const { name, age } = req.body;
+    const { name, age, dob, gender, race, address, street, unit, city, usState, zip, phone } = req.body;
     const patientId = req.params.pid;
 
     let patients;
@@ -104,6 +112,16 @@ const editPatient = async (req, res, next) => {
 
     patients.name = name;
     patients.age = age;
+    patients.dob = dob;
+    patients.gender = gender;
+    patients.race = race;
+    patients.address = address;
+    patients.street = street;
+    patients.unit = unit;
+    patients.city = city;
+    patients.usState = usState;
+    patients.zip = zip;
+    patients.phone = phone;
 
     try {
         await patients.save();

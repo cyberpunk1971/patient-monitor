@@ -32,12 +32,12 @@ const PatientSchema = new mongoose.Schema({
     street: {
         type: String,
     },
-
-    city: {
+    
+    unit: {
         type: String,
     },
 
-    unit: {
+    city: {
         type: String,
     },
 

@@ -6,6 +6,7 @@ const config = require('../config');
 const HttpError = require('../models/http-error');
 
 const { User } = require('../models/users');
+const { token } = require('morgan');
 
 const registerUser = async (req, res, next) => {
     const errors = validationResult(req);
@@ -156,6 +157,30 @@ const makeError = (err, msg) => {
     console.log(err);
     return error;
 }
+
+const refreshUser = (req, res, next) => {
+    const userExists = req.user
+    try {
+        token = jwt.sign({
+            userId: userExists.id,
+            email: userExists.email
+        },
+            config.JWT_SECRET,
+            { expiresIn: config.JWT_EXPIRY }
+        );
+    } catch (err) {
+        const error = new HttpError(
+            'Could not validate password, please try again.',
+            500
+        );
+        return next(error);
+    }
+    res.send({
+      authToken: token
+    })
+  }
+
 //exports.getUsers = getUsers;
+exports.refreshUser = refreshUser;
 exports.registerUser = registerUser;
 exports.loginUser = loginUser;

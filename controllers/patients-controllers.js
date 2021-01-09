@@ -39,7 +39,7 @@ const getPatientsByUserId = async (req, res, next) => {
 
     let patients
     try {
-        patients = await Patient.find({ creator: userId });
+        patients = await Patient.find({ creator: userId }).sort("name");
     } catch (err) {
         const error = new HttpError(
             "Could not find patient by that user ID.", 500

@@ -161,23 +161,25 @@ const makeError = (err, msg) => {
 const refreshUser = (req, res, next) => {
     const userExists = req.user
     try {
-        token = jwt.sign({
+       const token = jwt.sign({
             userId: userExists.id,
             email: userExists.email
         },
             config.JWT_SECRET,
             { expiresIn: config.JWT_EXPIRY }
         );
+        res.send({
+            authToken: token
+          })
     } catch (err) {
         const error = new HttpError(
             'Could not validate password, please try again.',
             500
         );
+        console.log(err);
         return next(error);
     }
-    res.send({
-      authToken: token
-    })
+   
   }
 
 //exports.getUsers = getUsers;

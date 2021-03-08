@@ -1,85 +1,89 @@
 const HttpError = require('../models/http-error');
 const { validationResult } = require('express-validator');
-const { Medication } = require('../models/medications');
+const { Physician } = require('../models/physician');
 const requireAuth = require('../auth/auth');
 const { User } = require('../models/users');
 const mongoose = require('mongoose');
 const { Patient } = require('../models/patients');
 
-const getMedicationsById = async (req, res, next) => {
-    const medicationId = req.params.pid;
-    let medication
+const getPhysiciansById = async (req, res, next) => {
+    const physicianId = req.params.pid;
+    let physician
     try {
-        medication = await Medication.findById(medicationId);
+        physician = await Physician.findById(physicianId);
     } catch (err) {
         const error = new HttpError(
-            "Could not find the medication.", 500
+            "Could not find that physician.", 500
         );
         return next(error);
     }
 
-    if (!medication) {
+    if (!physician) {
         const error = new HttpError(
-            "Medication not found for the ID provided.", 404
+            "Physician not found for the ID provided.", 404
         );
         return next(error);
     }
     //convert to javascript object and remove underscore from "id"
-    res.json({ medication: medication.toObject({ getters: true }) });
+    res.json({ physician: physician.toObject({ getters: true }) });
 };
 
-const getMedicationsByPatientId = async (req, res, next) => {
+const getPhysiciansByPatientId = async (req, res, next) => {
 
     const userId = req.user.id;
 
-    let medications
+    let physicians
     try {
-        medications = await Medication.find({ creator: userId });
+        physicians = await Physician.find({ creator: userId });
     } catch (err) {
         const error = new HttpError(
-            "Could not find medication by that user ID.", 500
+            "Could not find physician by that user ID.", 500
         );
         return next(error);
     }
 
-    if (!medications || medications.length === 0) {
+    if (!physicians || physicians.length === 0) {
         return next(
-            new HttpError("Medications not found for current user.", 404));
+            new HttpError("Physicians not found for current user.", 404));
     }
     //return the array of medications
-    res.json(medications.map(medication => medication.toObject({ getters: true })));
+    res.json(physicians.map(physician => physician.toObject({ getters: true })));
 };
 
-const addNewMedication = async (req, res, next) => {
+const addNewPhysician = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json(errors);
     }
 
-    const { name, dosage, frequency, route, date } = req.body;
+    const { name, npi, address, unit, city, usState, zip, phone, fax } = req.body;
     const newMedication = new Medication({
         name,
-        dosage,
-        frequency,
-        route,
-        date,
+        npi, 
+        address, 
+        unit, 
+        city, 
+        usState, 
+        zip, 
+        phone, 
+        fax,
         creator: req.user.id
     });
 
     let user;
 
     try {
-        newMedication.save();
+        newPhysician.save();
         // pass in req.params.pid, pid comes from the route we set up in //medications-routes.js
         await Patient.findByIdAndUpdate(req.params.pid, {
             //
             $push: {
-                medications: newMedication._id
+                physicians: newPhysician._id
             }
         });
     } catch (err) {
         const error = new HttpError(
-            "Unable to save medication", 500
+            "Unable to save physician", 500
         )
         console.log(err);
         return next(error);
@@ -87,31 +91,31 @@ const addNewMedication = async (req, res, next) => {
 
     console.log(user);
 
-    res.status(201).json({ medication: newMedication });
+    res.status(201).json({ physician: newPhysician });
 };
 
-const editMedication = async (req, res, next) => {
+const editPhysician = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         throw new HttpError("Please enter all fields.", 422);
     }
     const { name } = req.body;
-    const medicationId = req.params.pid;
+    const physicianId = req.params.pid;
 
-    let medications;
+    let physicians;
     try {
-        medications = await Medication.findById(medicationId);
+        physicians = await Physician.findById(physicianId);
     } catch (err) {
         const error = new HttpError(
-            "Could not edit medication.", 500
+            "Could not edit record.", 500
         );
         return next(error);
     }
 
-    medications.name = name;
+    physicians.name = name;
 
     try {
-        await medications.save();
+        await physicians.save();
     } catch (err) {
         const error = new HttpError(
             "Could not save edit.", 500
@@ -119,33 +123,33 @@ const editMedication = async (req, res, next) => {
         return next(error);
     }
 
-    res.status(200).json({ medication: medications.toObject({ getters: true }) });
+    res.status(200).json({ physician: physicians.toObject({ getters: true }) });
 
 };
 
-const deleteMedication = async (req, res, next) => {
+const deletePhysician = async (req, res, next) => {
     const patientId = req.params.pid;
-    const medicationId = req.params.mid;
+    const physicianId = req.params.mid;
     let patient;
-    let medication;
+    let physician;
     try {
         patient = await Patient.findByIdAndUpdate(patientId, {
             $pull: {
-                medications: medicationId
+                physicians: physicianId
             }
         });
     } catch (err) {
         console.log(err);
         const error = new HttpError(
-            "Could not delete medication.", 500
+            "Could not delete physician.", 500
         );
         return next(error);
     }
     res.status(200).json({ message: "Medication deleted." });
 };
 
-exports.getMedicationsById = getMedicationsById;
-exports.getMedicationsByPatientId = getMedicationsByPatientId;
-exports.addNewMedication = addNewMedication;
-exports.editMedication = editMedication;
-exports.deleteMedication = deleteMedication;
+exports.getPhysiciansById = getPhysiciansById;
+exports.getPhysiciansByPatientId = getPhysiciansByPatientId;
+exports.addNewPhysician = addNewPhysician;
+exports.editPhysician = editPhysician;
+exports.deletePhysician = deletePhysician;
